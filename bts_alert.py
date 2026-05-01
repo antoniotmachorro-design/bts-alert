@@ -8,9 +8,9 @@ TG_CHAT_ID = "8662544541"
 INTERVALO  = 60
 
 EVENTOS = {
-    "BTS CDMX - 7 mayo":  "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-city-ciudad-de-mexico-07-05-2026/event/",
-    "BTS CDMX - 9 mayo":  "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-city-ciudad-de-mexico-09-05-2026/event/",
-    "BTS CDMX - 10 mayo": "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-city-ciudad-de-mexico-10-05-2026/event/",
+    "BTS CDMX - 7 mayo":  "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-ciudad-de-mexico-07-05-2026/event/1400642AA1B78268",
+    "BTS CDMX - 9 mayo":  "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-ciudad-de-mexico-09-05-2026/event/1400642AA32C84D5",
+    "BTS CDMX - 10 mayo": "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-ciudad-de-mexico-10-05-2026/event/1400642AA32D84D7",
 }
 
 HEADERS = {
