@@ -3,35 +3,28 @@ import time
 import asyncio
 from telegram import Bot
 
+TM_API_KEY = "jxPyLtP0TLrgfnILSm0FclwyG7vf9aAK"
 TG_TOKEN   = "8786809670:AAGv4mqPNcLfTFZlOLdgAg7VtUoaX8kyD7A"
 TG_CHAT_ID = "8662544541"
 INTERVALO  = 60
 
 EVENTOS = {
-    "BTS CDMX - 7 mayo":  "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-ciudad-de-mexico-07-05-2026/event/1400642AA1B78268",
-    "BTS CDMX - 9 mayo":  "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-ciudad-de-mexico-09-05-2026/event/1400642AA32C84D5",
-    "BTS CDMX - 10 mayo": "https://www.ticketmaster.com.mx/bts-world-tour-arirang-in-mexico-ciudad-de-mexico-10-05-2026/event/1400642AA32D84D7",
+    "BTS CDMX - 7 mayo":  "1Av8Z_eGkn-czaI",
+    "BTS CDMX - 9 mayo":  "1Av8Z_eGknN5FK4",
+    "BTS CDMX - 10 mayo": "1Av8Z_eGknN5bK9",
 }
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
-}
+def verificar_evento(event_id):
+    url = f"https://app.ticketmaster.com/discovery/v2/events/{event_id}"
+    r = requests.get(url, params={"apikey": TM_API_KEY, "locale": "es-mx"}, timeout=10)
+    data = r.json()
+    status = data.get("dates", {}).get("status", {}).get("code", "offsale")
+    tiene_precio = "_embedded" in data and "priceRanges" in data
+    print(f"Status: {status}, tiene_precio: {tiene_precio}")
+    return status == "onsale" and tiene_precio
 
 async def enviar_mensaje(bot, chat_id, texto):
     await bot.send_message(chat_id=chat_id, text=texto)
-
-def hay_boletos(url):
-    try:
-        r = requests.get(url, headers=HEADERS, timeout=15)
-        texto = r.text
-        no_disponible = (
-            "Boletos no disponibles por INTERNET" in texto or
-            "ya no existe" in texto or
-            "no existe en nuestra base de datos" in texto
-        )
-        return not no_disponible
-    except:
-        return False
 
 async def main():
     bot = Bot(token=TG_TOKEN)
@@ -39,13 +32,14 @@ async def main():
     notificados = {nombre: False for nombre in EVENTOS}
 
     while True:
-        for nombre, url in EVENTOS.items():
+        for nombre, event_id in EVENTOS.items():
             try:
-                disponible = hay_boletos(url)
+                disponible = verificar_evento(event_id)
                 if disponible and not notificados[nombre]:
                     await enviar_mensaje(
                         bot, TG_CHAT_ID,
-                        f"🚨 BOLETOS DISPONIBLES!\n{nombre}\n\n👉 {url}"
+                        f"🚨 BOLETOS DISPONIBLES!\n{nombre}\n\n"
+                        f"👉 https://www.ticketmaster.com.mx/event/{event_id}"
                     )
                     notificados[nombre] = True
                     print(f"Alerta enviada: {nombre}")
