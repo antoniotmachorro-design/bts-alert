@@ -21,10 +21,17 @@ async def enviar_mensaje(bot, chat_id, texto):
     await bot.send_message(chat_id=chat_id, text=texto)
 
 def hay_boletos(url):
-    r = requests.get(url, headers=HEADERS, timeout=15)
-    texto = r.text
-    no_disponible = "Boletos no disponibles por INTERNET" in texto or "ya no existe" in texto
-    return not no_disponible
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=15)
+        texto = r.text
+        no_disponible = (
+            "Boletos no disponibles por INTERNET" in texto or
+            "ya no existe" in texto or
+            "no existe en nuestra base de datos" in texto
+        )
+        return not no_disponible
+    except:
+        return False
 
 async def main():
     bot = Bot(token=TG_TOKEN)
@@ -38,7 +45,7 @@ async def main():
                 if disponible and not notificados[nombre]:
                     await enviar_mensaje(
                         bot, TG_CHAT_ID,
-                        f"BOLETOS DISPONIBLES!\n{nombre}\n\n{url}"
+                        f"🚨 BOLETOS DISPONIBLES!\n{nombre}\n\n👉 {url}"
                     )
                     notificados[nombre] = True
                     print(f"Alerta enviada: {nombre}")
